@@ -41,6 +41,11 @@ spec:
         - name: {{ .Chart.Name }}-web-config
           configMap:
             name: {{ include "temporal.componentname" (list . "web") }}-config
+        {{- if or $.Values.server.config.tls.internode.enabled $.Values.server.config.tls.frontend.enabled  }}
+        - name: mtls-cert
+          secret:
+            secretName: {{ $.Values.server.config.tls.secretName }}
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}-web
           image: "{{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}"
@@ -48,6 +53,18 @@ spec:
           env:
             - name: TEMPORAL_ADDRESS
               value: "{{ include "temporal.fullname" . }}-frontend.{{ .Release.Namespace }}.svc:{{ .Values.server.frontend.service.port }}"
+            {{- if or $.Values.server.config.tls.internode.enabled $.Values.server.config.tls.frontend.enabled  }}
+            - name: TEMPORAL_TLS_CERT
+              value: "{{ $.Values.server.config.tls.mountDir}}/tls.crt"
+            - name: TEMPORAL_TLS_KEY
+              value: "{{ $.Values.server.config.tls.mountDir}}/tls.key"
+            - name: TEMPORAL_TLS_CA
+              value: "{{ $.Values.server.config.tls.mountDir}}/ca.crt"
+            - name: TEMPORAL_TLS_ENABLE_HOST_VERIFICATION
+              value: "true"
+            - name: TEMPORAL_TLS_SERVER_NAME
+              value: {{ ternary $.Values.server.config.tls.client.serverName $.Values.server.config.tls.frontend.client.serverName (eq $.Values.server.config.tls.frontend.client.serverName "")}}
+            {{- end }}
           {{- if .Values.web.additionalEnv }}
           {{- toYaml .Values.web.additionalEnv | nindent 12 }}
           {{- end }}
@@ -55,6 +72,12 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          {{- if or $.Values.server.config.tls.internode.enabled $.Values.server.config.tls.frontend.enabled  }}
+          volumeMounts:
+            - name: mtls-cert
+              mountPath: {{ $.Values.server.config.tls.mountDir }}
+              readOnly: true
+          {{- end }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           {{- with .Values.web.containerSecurityContext }}

@@ -20,3 +20,7 @@
 .idea/
 *.tmproj
 .vscode/
+manifests.yaml
+package
+README.md
+LICENSE

@@ -89,6 +89,37 @@ server:
     runAsUser: 1000
 
   config:
+    tls:
+      secretName: ""
+      mountDir: ""
+      server:
+        certFile: ""
+        keyFile: ""
+        requireClientAuth: true
+        clientCaFiles: [ ]
+      client:
+        serverName: ""
+        rootCaFiles: [ ]
+      internode:
+        enabled: false
+        server:
+          certFile: ""
+          keyFile: ""
+          requireClientAuth: true
+          clientCaFiles: [ ]
+        client:
+          serverName: ""
+          rootCaFiles: [ ]
+      frontend:
+        enabled: false
+        server:
+          certFile: ""
+          keyFile: ""
+          requireClientAuth: true
+          clientCaFiles: [ ]
+        client:
+          serverName: ""
+          rootCaFiles: [ ]
     logLevel: "debug,info"
 
     # IMPORTANT: This value cannot be changed, once it's set.

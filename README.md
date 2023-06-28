@@ -1,4 +1,24 @@
 # Temporal Helm Chart
+## Cheat code
+
+```bash
+## Building helm package
+```bash
+# clone this repo
+# update the fork and git checkout the tag
+$ helm dependencies update
+
+# to create manifest (preferred way)
+$ rm manifests.yaml
+# for staging e.g carthage
+$ helm template temporal . -f values.yaml -f values/values.staging.yaml > manifests-stage-1-21-0.yaml
+$ helm template temporal . -f values.yaml -f values/values.prod.yaml > manifests-prod-1-21-0.yaml
+
+```
+
+
+
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Ftemporalio%2Ftemporal-helm-charts.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Ftemporalio%2Ftemporal-helm-charts?ref=badge_shield)
 
 Temporal is a distributed, scalable, durable, and highly available orchestration engine designed to execute asynchronous long-running business logic in a resilient way.
